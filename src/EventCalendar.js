@@ -13,7 +13,8 @@ import React from 'react';
 import styleConstructor from './style';
 
 import DayView from './DayView';
-
+const LEFT_MARGIN = 50 - 1;
+var indexss = '';
 export default class EventCalendar extends React.Component {
   constructor(props) {
     super(props);
@@ -56,6 +57,7 @@ export default class EventCalendar extends React.Component {
       index - this.props.size,
       'days'
     );
+
     return _.filter(events, event => {
       const eventStartTime = moment(event.start);
       return (
@@ -63,6 +65,7 @@ export default class EventCalendar extends React.Component {
         eventStartTime <= date.clone().endOf('day')
       );
     });
+
   }
 
   _renderItem({ index, item }) {
@@ -75,42 +78,57 @@ export default class EventCalendar extends React.Component {
       end = 24,
       formatHeader,
       upperCaseHeader = false,
+      stylists
     } = this.props;
     const date = moment(initDate).add(index - this.props.size, 'days');
-
+    indexss = date;
     const leftIcon = this.props.headerIconLeft ? (
-        this.props.headerIconLeft
+      this.props.headerIconLeft
     ) : (
         <Image source={require('./back.png')} style={this.styles.arrow} />
-    );
+      );
     const rightIcon = this.props.headerIconRight ? (
-        this.props.headerIconRight
+      this.props.headerIconRight
     ) : (
         <Image source={require('./forward.png')} style={this.styles.arrow} />
-    );
+      );
 
     let headerText = upperCaseHeader
-        ? date.format(formatHeader || 'DD MMMM YYYY').toUpperCase()
-        : date.format(formatHeader || 'DD MMMM YYYY');
-
+      ? date.format(formatHeader || 'DD MMMM YYYY').toUpperCase()
+      : date.format(formatHeader || 'DD MMMM YYYY');
+    // alert(headerText)
     return (
       <View style={[this.styles.container, { width }]}>
         <View style={this.styles.header}>
           <TouchableOpacity
-              style={this.styles.arrowButton}
-              onPress={this._previous}
+            style={this.styles.arrowButton}
+            onPress={this._previous}
           >
             {leftIcon}
           </TouchableOpacity>
+
           <View style={this.styles.headerTextContainer}>
             <Text style={this.styles.headerText}>{headerText}</Text>
           </View>
           <TouchableOpacity
-              style={this.styles.arrowButton}
-              onPress={this._next}
+            style={this.styles.arrowButton}
+            onPress={this._next}
           >
             {rightIcon}
           </TouchableOpacity>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+
+          {stylists.map((item, i) => (
+
+            <View style={{ flex: 1, marginLeft: i == 0 ? LEFT_MARGIN : 0 }}>
+              <Text style={[this.styles.headerText, { fontSize: 13, textAlign: 'center', paddingTop: 5, paddingBottom: 2 }]}
+                numberOfLines={2}
+              >{item.title}</Text>
+            </View>
+          ))}
+
+
         </View>
         <DayView
           date={date}
@@ -120,12 +138,15 @@ export default class EventCalendar extends React.Component {
           headerStyle={this.props.headerStyle}
           renderEvent={this.props.renderEvent}
           eventTapped={this.props.eventTapped}
+          emptyEventTapped={this.props.emptyEventTapped}
           events={item}
+          stylists={stylists}
           width={width}
           styles={this.styles}
           scrollToFirst={scrollToFirst}
           start={start}
           end={end}
+
         />
       </View>
     );
@@ -161,6 +182,7 @@ export default class EventCalendar extends React.Component {
           .format('YYYY-MM-DD')
       );
     }
+
   };
 
   _next = () => {
@@ -172,6 +194,7 @@ export default class EventCalendar extends React.Component {
           .format('YYYY-MM-DD')
       );
     }
+
   };
 
   render() {
@@ -180,14 +203,16 @@ export default class EventCalendar extends React.Component {
       virtualizedListProps,
       events,
       initDate,
+      stylists
+
     } = this.props;
 
     return (
       <View style={[this.styles.container, { width }]}>
         <VirtualizedList
           ref="calendar"
-          windowSize={2}
-          initialNumToRender={2}
+          windowSize={1}
+          initialNumToRender={1}
           initialScrollIndex={this.props.size}
           data={events}
           getItemCount={() => this.props.size * 2}
@@ -198,7 +223,9 @@ export default class EventCalendar extends React.Component {
           pagingEnabled
           renderItem={this._renderItem.bind(this)}
           style={{ width: width }}
+
           onMomentumScrollEnd={event => {
+
             const index = parseInt(event.nativeEvent.contentOffset.x / width);
             const date = moment(this.props.initDate).add(
               index - this.props.size,
@@ -208,6 +235,7 @@ export default class EventCalendar extends React.Component {
               this.props.dateChanged(date.format('YYYY-MM-DD'));
             }
             this.setState({ index, date });
+
           }}
           {...virtualizedListProps}
         />
