@@ -523,7 +523,7 @@ this.setState({
         ref={ref => (this._scrollView = ref)}
         contentContainerStyle={[
           styles.contentStyle,
-          { width: this.props.width,height:calendarHeight+50 },
+          { width: this.props.width,height:calendarHeight+10 },
         ]}
       >
        {/* {this._renderBlankEvents()} */}
