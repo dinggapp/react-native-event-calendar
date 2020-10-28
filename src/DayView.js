@@ -61,7 +61,7 @@ export default class DayView extends React.PureComponent {
   componentWillReceiveProps(nextProps) {
 
     calendarHeight = (nextProps.end - nextProps.start) * 100;
-    console.log("calendarHeight", calendarHeight);
+   // console.log("calendarHeight", calendarHeight);
     const packedEvents = populateEvents(nextProps.events, width, nextProps.start);
     let initPosition =
     _.min(_.map(packedEvents, 'top')) -
@@ -523,7 +523,7 @@ this.setState({
         ref={ref => (this._scrollView = ref)}
         contentContainerStyle={[
           styles.contentStyle,
-          { width: this.props.width,height:calendarHeight+10 },
+          { width: this.props.width,height:calendarHeight+50 },
         ]}
       >
        {/* {this._renderBlankEvents()} */}
